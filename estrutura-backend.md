@@ -75,7 +75,6 @@ No backend, esta seria a rota:
 
 ```javascript
 app.post('/api/jogador/', (req, res) => {
-  console.log(req)
 
   if (!req.body) {
     res.status(400).json({ error: erro.message });
@@ -135,7 +134,6 @@ Periodicamente, o frontend deve enviar o progresso do jogador para o backend. Pa
 
 ```javascript
 app.post('/api/progresso/', (req, res) => {
-  console.log(req)
 
   if (!req.body) {
     res.status(400).json({ error: erro.message });
@@ -154,7 +152,7 @@ app.post('/api/progresso/', (req, res) => {
       }
       res.status(200).json({
         ok: true,
-        message: `Jogador ${nome} criado com sucesso`,
+        message: `Progresso do jogador ${nome} atualizado.`,
         data: { id: this.lastID },
         id: this.lastID,
         total: itensDaTabela,
@@ -181,6 +179,54 @@ async function criarJogador() {
         nome: jogador,
         progresso: progresso,
       })
+    })
+    .then( (response) => {
+       // Decida aqui o que fazer com a resposta do servidor
+       // E trate os erros de acordo com o necessário
+    });
+}
+```
+
+## Carregando progresso do jogador
+
+```javascript
+app.get('/api/progresso/:nome', (req, res) => {
+
+  if (!req.params.nome) {
+    res.status(400).json({ error: erro.message });
+    return
+  }
+
+  const { nome } = req.params.nome
+  
+  db.all(
+    `SELECT * FROM ${TabelaPrincipal} WHERE nome = ?`,
+    [ nome],
+    (erro, itensDaTabela) => {
+      if (erro) {
+        res.status(400).json({ ok: false, error: erro.message });
+        return;
+      }
+      res.status(200).json({
+        ok: true,
+        message: `Jogador ${nome} encontrado.`,
+        data: { id: this.lastID },
+        id: this.lastID,
+        total: itensDaTabela,
+      });
+    }
+  )
+})
+```
+
+E no frontend, esta seria a base da requisição para atualizar o progresso do jogador (dentro de algum dos componentes, a seu critério):
+
+```javascript
+const [jogador, setJogador] = useState("")
+
+async function criarJogador() {
+    await fetch(`http://localhost:3000/api/progresso/${jogador}`, {
+      method: "GET",
     })
     .then( (response) => {
        // Decida aqui o que fazer com a resposta do servidor
