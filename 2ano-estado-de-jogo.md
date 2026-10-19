@@ -189,7 +189,7 @@ export default function App() {
 
 - TelaTitulo.jsx
 ```javascript
-export default function TelaTitulo({}) {
+export default function TelaTitulo() {
 
   const {
     jogador,
@@ -224,9 +224,9 @@ export default function TelaTitulo({}) {
 
 - TelaJogo.jsx
 ```javascript
-export default function TelaJogo({jogador}) {
+export default function TelaJogo() {
 
-  const {jogador} = useEstado()
+  const { jogador, contador } = useEstado()
 
   return(<div>
     <p> Jogo iniciado com o jogador {jogador} </p>
