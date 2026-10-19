@@ -98,6 +98,7 @@ Notem que no exemplo acima, precisamos criar todos os valores existentes dentro 
 
 ## Solução
 
+Vamos para isso usar uma biblioteca chamada `Zustand`. Instale ela rodando o comando `npm install zustand` com o terminal na pasta correta do projeto (a que tem o arquivo `package.json`)  
 Ao utilizar o `Zustand`, criamos todos os valores e suas funções modificadoras em um arquivo a parte, cujo nome e elemento exportado devem começar com `use`:
 
 - useEstado.jsx
