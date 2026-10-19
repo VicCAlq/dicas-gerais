@@ -18,16 +18,28 @@ export default function App() {
 
   const [jogador, setJogador] = useState(false)
   const [iniciado, setIniciado] = useState(false)
+  const [contador, setContador] = useState(false)
 
-  function iniciar() {
-    setIniciado(!iniciado)
-  }
+  function iniciar() { setIniciado(!iniciado) }
+
+  function aumentarContador(numero) { setContador(contador + numero) }
+
+  function reduzirContador(numero) { setContador(contador - numero) }
 
   return (
     <View>
-      <TelaTitulo jogador={jogador} setJogador={setJogador}, setIniciado={iniciar} />
+      <TelaTitulo
+        jogador={jogador}
+        setJogador={setJogador}
+        setIniciado={iniciar}
+        aumentarContador={aumentarContador}
+        reduzirContador={reduzirContador}
+      />
       {iniciado !== false ?
-        <TelaJogo jogador={jogador}/> :
+        <TelaJogo
+          jogador={jogador} 
+          contador={contador}
+        /> :
         <View>
           <Text>
             Jogo não iniciado
@@ -42,7 +54,13 @@ export default function App() {
 
 - TelaTitulo.jsx
 ```javascript
-export default function TelaTitulo({ jogador, setJogador, setIniciado }) {
+export default function TelaTitulo({ 
+  jogador,
+  setJogador,
+  setIniciado,
+  aumentarContador,
+  reduzirContador
+}) {
 
   return (<View>
     <Text> Tela inicial </Text>
@@ -55,18 +73,23 @@ export default function TelaTitulo({ jogador, setJogador, setIniciado }) {
     <Pressable onPress={setIniciado} >
       <Text>Iniciar</Text>
     </Pressable>
+    <Pressable onClick={() => aumentarContador(3)} >
+      <Text>Aumentar Contador</Text>
+    </Pressable>
+    <Pressable onClick={() => reduzirContador(2)} >
+      <Text>Reduzir Contador</Text>
+    </Pressable>
   </View>)
 }
 ```
 
 - TelaJogo.jsx
 ```javascript
-export default function TelaJogo({jogador}) {
+export default function TelaJogo({jogador, contador}) {
   
   return(<View>
-    <Text>
-      Jogo iniciado com o jogador {jogador}
-    </Text>
+    <Text> Jogo iniciado com o jogador {jogador} </Text>
+    <Text> Valor do contador: {contador} </Text>
   </View>)
 }
 ```
@@ -103,7 +126,21 @@ const useEstado = create((set) => ({
   // const [iniciado, setIniciado] = useState(false)
   setIniciado: () => set((estado) => ({
     iniciado: !estado.iniciado
-  }))
+  })),
+  // equivalente a variável "contador" do estado
+  // const [contador, setContador] = useState(0)
+  contador: 0,
+  // aumentarContador vai ser uma função anônima que recebe
+  // um número a ser adicionado a variável contador, recebendo
+  // o valor anterior do contador e acrescentando o número informado.
+  aumentarContador: (numero) => set((estado) => ({
+    contador: estado.contador + numero
+  })),
+  // reduzirContador é o mesmo que "aumentarContador", mas vai
+  // reduzir o número informado do contador ao invés de aumentar.
+  reduzirContador: (numero) => set((estado) => ({
+    contador: estado.contador - numero
+  })),
 }))
 
 export default useEstado
@@ -117,7 +154,14 @@ const useEstado = create((set) => ({
   jogador: "Chapolin Colorado",
   setJogador: (nome) => set(() => ({ jogador: nome })),
   iniciado: false,
-  setIniciado: () => set((estado) => ({ iniciado: !estado.iniciado }))
+  setIniciado: () => set((estado) => ({ iniciado: !estado.iniciado })),
+  contador: 0,
+  aumentarContador: (numero) => set((estado) => ({
+    contador: estado.contador + numero
+  })),
+  reduzirContador: (numero) => set((estado) => ({
+    contador: estado.contador - numero
+  })),
 }))
 
 export default useEstado
@@ -146,9 +190,15 @@ export default function App() {
 
 - TelaTitulo.jsx
 ```javascript
-export default function TelaTitulo({}) {
+export default function TelaTitulo() {
 
-  const { jogador, setJogador, setIniciado, } = useEstado()
+  const {
+    jogador,
+    setJogador,
+    setIniciado,
+    aumentarContador,
+    reduzirContador
+  } = useEstado()
 
   return (<View>
     <Text> Tela inicial </Text>
@@ -163,20 +213,25 @@ export default function TelaTitulo({}) {
     <Pressable onPress={setIniciado} >
       <Text>Iniciar</Text>
     </Pressable>
+    <Pressable onClick={() => aumentarContador(3)} >
+      <Text>Aumentar Contador</Text>
+    </Pressable>
+    <Pressable onClick={() => reduzirContador(2)} >
+      <Text>Reduzir Contador</Text>
+    </Pressable>
   </View>)
 }
 ```
 
 - TelaJogo.jsx
 ```javascript
-export default function TelaJogo({jogador}) {
+export default function TelaJogo() {
 
-  const {jogador} = useEstado()
+  const { jogador, contador } = useEstado()
 
   return(<View>
-    <Text>
-      Jogo iniciado com o jogador {jogador}
-    </Text>
+    <Text> Jogo iniciado com o jogador {jogador} </Text>
+    <Text> Valor do contador: {contador} </Text>
   </View>)
 }
 ```
